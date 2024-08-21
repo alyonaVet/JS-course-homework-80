@@ -1,19 +1,21 @@
 export interface Category {
-    id: number;
+    id: string;
     title: string;
     description: string | null;
 }
 
+export type CategoryType = Omit<Category, 'id'>;
+
 export interface Place {
-    id: number;
+    id: string;
     title: string;
     description: string | null;
 }
 
 export interface Item {
-    id: number;
-    category_id: number;
-    place_id: number;
+    id: string;
+    category_id: string;
+    place_id: string;
     title: string;
     description: string | null;
     image: string | null;
