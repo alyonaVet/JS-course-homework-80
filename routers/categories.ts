@@ -1,9 +1,13 @@
 import express from "express";
+import fileDb from "../fileDb";
+import {CategoryType} from "../types";
 
 const categoriesRouter = express.Router();
 
-categoriesRouter.get("/", (req, res) => {
-    return res.send("Here are your categories: ");
+categoriesRouter.get("/", async (req, res) => {
+    const allCategories = await fileDb.getCategories();
+
+    return res.send(allCategories);
 });
 
 categoriesRouter.get("/:id", (req, res) => {
@@ -11,8 +15,17 @@ categoriesRouter.get("/:id", (req, res) => {
     return res.send(category_id);
 });
 
-categoriesRouter.post("/", (req, res) => {
-    return res.send(req.body);
+categoriesRouter.post("/", async (req, res) => {
+    if (!req.body.title) {
+        return res.status(400).send({error: "Title must be present in the request"});
+    }
+    const category: CategoryType = {
+        title: req.body.title,
+        description: req.body.description || null,
+    }
+    const savedCategory = await fileDb.addCategory(category);
+
+    return res.send(savedCategory);
 });
 
 categoriesRouter.delete("/:id", (req, res) => {
