@@ -1,5 +1,5 @@
 import {promises as fs} from 'fs';
-import {Category, CategoryType, Item, Place, PlaceType} from "./types";
+import {Category, CategoryType, Item, ItemType, Place, PlaceType} from "./types";
 
 const fileName = './db.json';
 let data = {
@@ -43,6 +43,13 @@ const fileDb = {
         data.places.push(placeData);
         await this.save();
         return placeData;
+    },
+    async addItem(item: ItemType) {
+        const id = crypto.randomUUID();
+        const itemData = {id, ...item};
+        data.items.push(itemData);
+        await this.save();
+        return itemData;
     },
     async save() {
         return fs.writeFile(fileName, JSON.stringify(data, null, 2));
