@@ -10,9 +10,18 @@ categoriesRouter.get("/", async (req, res) => {
     return res.send(allCategories);
 });
 
-categoriesRouter.get("/:id", (req, res) => {
-    const category_id = req.params.id;
-    return res.send(category_id);
+categoriesRouter.get("/:id",  async (req, res, next) => {
+    const categoryId = req.params.id;
+    try {
+        const category = await fileDb.getCategoryById(categoryId);
+
+        if (!category) {
+            return res.status(404).send({message: "Category not found"});
+        }
+        return res.send(category);
+    } catch (error) {
+        next(error);
+    }
 });
 
 categoriesRouter.post("/", async (req, res) => {
