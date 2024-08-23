@@ -1,6 +1,6 @@
 import express from "express";
 import fileDb from "../fileDb";
-import {CategoryType, PlaceType} from "../types";
+import {PlaceType} from "../types";
 
 const placesRouter = express.Router();
 
@@ -10,9 +10,18 @@ placesRouter.get("/", async (req, res) => {
     return res.send(allPlaces);
 });
 
-placesRouter.get("/:id", (req, res) => {
+placesRouter.get("/:id", async (req, res, next) => {
     const place_id = req.params.id;
-    return res.send(place_id);
+    try {
+        const place = await fileDb.getPlaceById(place_id);
+        if (!place) {
+            return res.status(404).send({message: "Place not found"});
+        }
+        return res.send(place);
+
+    } catch (error) {
+        next(error);
+    }
 });
 
 placesRouter.post("/", async (req, res) => {
@@ -25,15 +34,17 @@ placesRouter.post("/", async (req, res) => {
     }
     const savedPlace = await fileDb.addPlace(place);
 
-    return res.send(savedPlace);});
+    return res.send(savedPlace);
+});
 
 placesRouter.delete("/:id", async (req, res, next) => {
     const place_id = req.params.id;
     try {
         await fileDb.deletePlace(place_id);
-        return res.status(200).send({ message: "Place was deleted successfully" });
+        return res.status(200).send({message: "Place was deleted successfully"});
     } catch (error) {
         next(error);
-    }});
+    }
+});
 
 export default placesRouter;
