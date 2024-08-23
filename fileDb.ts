@@ -51,6 +51,30 @@ const fileDb = {
         await this.save();
         return itemData;
     },
+    async deleteCategory(id: string) {
+        const items = await this.getItems();
+        const itemCategory = items.some(item => item.category_id === id);
+
+        if (itemCategory) {
+            throw new Error(`Could not delete category with assigned items.`);
+        }
+        data.categories = data.categories.filter(category => category.id !== id);
+        await this.save();
+    },
+    async deletePlace(id: string) {
+        const items = await this.getItems();
+        const itemPlace = items.some(item => item.place_id === id);
+
+        if (itemPlace) {
+            throw new Error(`Could not delete place with assigned items.`);
+        }
+        data.places = data.places.filter(place => place.id !== id);
+        await this.save();
+    },
+    async deleteItem(id: string) {
+        data.items = data.items.filter(item => item.id !== id);
+        await this.save();
+    },
     async save() {
         return fs.writeFile(fileName, JSON.stringify(data, null, 2));
     }
