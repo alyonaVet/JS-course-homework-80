@@ -22,13 +22,24 @@ const fileDb = {
         }
     },
     async getCategories() {
-        return data.categories;
+        return data.categories.map(category => ({
+            id: category.id,
+            title: category.title,
+        }));
     },
     async getPlaces() {
-        return data.places;
+        return data.places.map(place => ({
+            id: place.id,
+            title: place.title,
+        }));
     },
     async getItems() {
-        return data.items;
+        return data.items.map(item => ({
+            id: item.id,
+            title: item.title,
+            category_id: item.category_id,
+            place_id: item.place_id,
+        }));
     },
     async addCategory(category: CategoryType) {
         const id = crypto.randomUUID();
