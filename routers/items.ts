@@ -32,8 +32,14 @@ itemsRouter.post("/", imagesUpload.single('image'), async (req, res) => {
     return res.send(savedItem);
 });
 
-itemsRouter.delete("/:id", async (req, res) => {
+itemsRouter.delete("/:id", async (req, res, next) => {
     const item_id = req.params.id;
+    try {
+        await fileDb.deleteItem(item_id);
+        return res.status(200).send({ message: "Item was deleted successfully" });
+    } catch (error) {
+        next(error);
+    }
     return res.send(item_id);
 });
 
