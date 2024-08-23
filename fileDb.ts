@@ -27,11 +27,19 @@ const fileDb = {
             title: category.title,
         }));
     },
+    async getCategoryById(id: string) {
+        const category = data.categories.find(category => category.id === id);
+        return category || null;
+    },
     async getPlaces() {
         return data.places.map(place => ({
             id: place.id,
             title: place.title,
         }));
+    },
+    async getPlaceById(id: string) {
+        const place = data.places.find(place => place.id === id);
+        return place || null;
     },
     async getItems() {
         return data.items.map(item => ({
@@ -40,6 +48,10 @@ const fileDb = {
             category_id: item.category_id,
             place_id: item.place_id,
         }));
+    },
+    async getItemById(id: string) {
+        const item = data.items.find(item => item.id === id);
+        return item || null;
     },
     async addCategory(category: CategoryType) {
         const id = crypto.randomUUID();
