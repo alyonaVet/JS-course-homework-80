@@ -4,13 +4,16 @@ import {CategoryType} from "../types";
 
 const categoriesRouter = express.Router();
 
-categoriesRouter.get("/", async (req, res) => {
-    const allCategories = await fileDb.getCategories();
-
-    return res.send(allCategories);
+categoriesRouter.get("/", async (req, res, next) => {
+    try {
+        const allCategories = await fileDb.getCategories();
+        return res.send(allCategories);
+    } catch (error) {
+        next(error);
+    }
 });
 
-categoriesRouter.get("/:id",  async (req, res, next) => {
+categoriesRouter.get("/:id", async (req, res, next) => {
     const categoryId = req.params.id;
     try {
         const category = await fileDb.getCategoryById(categoryId);
@@ -24,24 +27,46 @@ categoriesRouter.get("/:id",  async (req, res, next) => {
     }
 });
 
-categoriesRouter.post("/", async (req, res) => {
-    if (!req.body.title) {
-        return res.status(400).send({error: "Title must be present in the request"});
-    }
-    const category: CategoryType = {
-        title: req.body.title,
-        description: req.body.description || null,
-    }
-    const savedCategory = await fileDb.addCategory(category);
+categoriesRouter.post("/", async (req, res, next) => {
+    try {
+        if (!req.body.title) {
+            return res.status(400).send({error: "Title must be present in the request"});
+        }
+        const category: CategoryType = {
+            title: req.body.title,
+            description: req.body.description || null,
+        }
+        const savedCategory = await fileDb.addCategory(category);
 
-    return res.send(savedCategory);
+        return res.send(savedCategory);
+    } catch (error) {
+        next(error);
+    }
 });
 
 categoriesRouter.delete("/:id", async (req, res, next) => {
     const categoryId = req.params.id;
     try {
         await fileDb.deleteCategory(categoryId);
-        return res.status(200).send({ message: "Category was deleted successfully" });
+        return res.status(200).send({message: "Category was deleted successfully"});
+    } catch (error) {
+        next(error);
+    }
+});
+
+categoriesRouter.put("/:id", async (req, res, next) => {
+    const categoryId = req.params.id;
+
+    const newCategoryData: CategoryType = {
+        title: req.body.title,
+        description: req.body.description || null,
+    };
+    try {
+        const updatedCategory = await fileDb.updateCategory(categoryId, newCategoryData);
+        if (!updatedCategory) {
+            return res.status(404).send({error: "Category not found"});
+        }
+        return res.send(updatedCategory);
     } catch (error) {
         next(error);
     }
