@@ -27,9 +27,13 @@ placesRouter.post("/", async (req, res) => {
 
     return res.send(savedPlace);});
 
-placesRouter.delete("/:id", (req, res) => {
+placesRouter.delete("/:id", async (req, res, next) => {
     const place_id = req.params.id;
-    return res.send(place_id);
-});
+    try {
+        await fileDb.deletePlace(place_id);
+        return res.status(200).send({ message: "Place was deleted successfully" });
+    } catch (error) {
+        next(error);
+    }});
 
 export default placesRouter;
