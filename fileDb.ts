@@ -31,6 +31,17 @@ const fileDb = {
         const category = data.categories.find(category => category.id === id);
         return category || null;
     },
+    async updateCategory(id: string, newCategoryData: CategoryType) {
+        const category = await this.getCategoryById(id);
+
+        if (!category) {
+            return null;
+        }
+        category.title = newCategoryData.title;
+        category.description = newCategoryData.description;
+        await this.save();
+        return category;
+    },
     async getPlaces() {
         return data.places.map(place => ({
             id: place.id,
@@ -40,6 +51,17 @@ const fileDb = {
     async getPlaceById(id: string) {
         const place = data.places.find(place => place.id === id);
         return place || null;
+    },
+    async updatePlace(id: string, newPlaceData: PlaceType) {
+        const place = await this.getPlaceById(id);
+
+        if (!place) {
+            return null;
+        }
+        place.title = newPlaceData.title;
+        place.description = newPlaceData.description;
+        await this.save();
+        return place;
     },
     async getItems() {
         return data.items.map(item => ({
@@ -52,6 +74,21 @@ const fileDb = {
     async getItemById(id: string) {
         const item = data.items.find(item => item.id === id);
         return item || null;
+    },
+    async updateItem(id: string, newItemData: ItemType) {
+        const item = await this.getItemById(id);
+
+        if (!item) {
+            return null;
+        }
+        item.title = newItemData.title;
+        item.category_id = newItemData.category_id;
+        item.place_id = newItemData.place_id;
+        item.description = newItemData.description;
+        item.image = newItemData.image;
+
+        await this.save();
+        return item;
     },
     async addCategory(category: CategoryType) {
         const id = crypto.randomUUID();
