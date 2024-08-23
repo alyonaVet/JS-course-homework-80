@@ -28,9 +28,14 @@ categoriesRouter.post("/", async (req, res) => {
     return res.send(savedCategory);
 });
 
-categoriesRouter.delete("/:id", (req, res) => {
-    const category_id = req.params.id;
-    return res.send(category_id);
+categoriesRouter.delete("/:id", async (req, res, next) => {
+    const categoryId = req.params.id;
+    try {
+        await fileDb.deleteCategory(categoryId);
+        return res.status(200).send({ message: "Category was deleted successfully" });
+    } catch (error) {
+        next(error);
+    }
 });
 
 export default categoriesRouter;
